@@ -13,14 +13,18 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-@Table(name="role_authorities")
-public class RoleAuthority {
+@Table(name="authorities")
+public class Authority {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private  Integer id;
-    private Integer authority_id;
+    private Integer id;
 
-    @ManyToOne
-    private Role role;
+    private String name;
+
+    @ManyToMany(mappedBy = "authorities")
+    private List<Role> roles;
+
+
+
 }

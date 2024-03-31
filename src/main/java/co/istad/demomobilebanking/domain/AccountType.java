@@ -28,8 +28,8 @@ public class AccountType {
 
     private Boolean isDeleted;
 
-//    @ManyToOne
-//    private  AccountType accountType;
+    @Column(unique = true, nullable = false, length = 100)
+    private String alias;
 
     @OneToMany(mappedBy = "accountType")
     private List<Account> Account;
