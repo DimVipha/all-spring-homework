@@ -1,2 +1,4 @@
-package co.istad.demomobilebanking.feature.user.DTO;public class UserSnippetResponse {
+package co.istad.demomobilebanking.feature.user.DTO;
+
+public record UserSnippetResponse() {
 }

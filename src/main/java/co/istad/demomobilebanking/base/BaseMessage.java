@@ -1,2 +1,14 @@
-package co.istad.demomobilebanking.base;public class BaseMessage {
+package co.istad.demomobilebanking.base;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class BaseMessage {
+    private  String message;
 }
