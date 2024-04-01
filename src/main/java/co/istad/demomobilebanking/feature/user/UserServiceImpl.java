@@ -62,14 +62,6 @@ public class UserServiceImpl implements  UserService {
         user.setIsBlocked(false);
         user.setIsDeleted(false);
 
-        // Assign default user role
-        List<Role> roles = new ArrayList<>();
-        Role userRole = roleRepository.findByName("USER")
-                .orElseThrow(() ->
-                        new ResponseStatusException(HttpStatus.NOT_FOUND,
-                                "Role USER has not been found!"));
-        roles.add(userRole);
-        user.setRoles(roles);
 
         userRepository.save(user);
     }
