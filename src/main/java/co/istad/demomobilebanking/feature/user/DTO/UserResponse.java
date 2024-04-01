@@ -1,7 +1,2 @@
-package co.istad.demomobilebanking.feature.user.DTO;
-
-public record UserResponse(
-
-) {
-
+package co.istad.demomobilebanking.feature.user.DTO;public class UserResponse {
 }

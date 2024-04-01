@@ -45,25 +45,32 @@ public class DataInit {
     @PostConstruct
     void initAccountType(){
         if (accountTypeRepository.count() < 1){
-
-
             AccountType payRoll = new AccountType();
             payRoll.setName("Payroll account");
-            payRoll.setAlias("payroll");
+            payRoll.setAlias("payroll account type");
             payRoll.setIsDeleted(false);
-            payRoll.setDescription("For payroll account type");
+            payRoll.setDescription("a type of account used specifically for employee compensation, whether it's to do with salary, wage, or bonuses");
+            accountTypeRepository.save(payRoll);
 
-            //saving account
-            AccountType saving = new AccountType();
-            saving.setName("Saving");
-            saving.setAlias("saving");
-            saving.setIsDeleted(false);
-            saving.setDescription("For saving account type");
+            //saving account type
+            AccountType savingAct = new AccountType();
+            savingAct.setName("Saving");
+            savingAct.setAlias("saving");
+            savingAct.setIsDeleted(false);
+            savingAct.setDescription(" a deposit account held at a financial institution that provides security for your principal and a modest interest rate");
+            accountTypeRepository.save(savingAct);
 
-            accountTypeRepository.saveAll(
+
+            AccountType cardAccount=new AccountType();
+            cardAccount.setName("card account ");
+            cardAccount.setAlias("saving account type");
+            cardAccount.setIsDeleted(false);
+            cardAccount.setDescription("Card Account means the Cardholder's Account(s) with the Bank in respect of which the Card is issued,");
+            accountTypeRepository.save(cardAccount);
+
+             /*accountTypeRepository.saveAll(
                     List.of(payRoll,saving)
-            );
-
+            );*/
 
         }
 
@@ -75,14 +82,16 @@ public class DataInit {
             CardType visaCard = new CardType();
             visaCard.setName("Visa Card");
             visaCard.setIsDeleted(false);
+            cardTypeRepository.save(visaCard);
 
             CardType masterCard = new CardType();
             masterCard.setName("MasterCard");
             masterCard.setIsDeleted(false);
+            cardTypeRepository.save(masterCard);
 
-            cardTypeRepository.saveAll(
+            /*cardTypeRepository.saveAll(
                     List.of(visaCard,masterCard)
-            );
+            );*/
 
         }
 
