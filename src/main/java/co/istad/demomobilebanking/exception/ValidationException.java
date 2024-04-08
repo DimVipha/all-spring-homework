@@ -1,4 +1,4 @@
-package co.istad.demomobilebanking.feature.user;
+package co.istad.demomobilebanking.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
