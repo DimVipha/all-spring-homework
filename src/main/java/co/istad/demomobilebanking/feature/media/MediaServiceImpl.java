@@ -8,7 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -25,6 +28,7 @@ import java.util.ArrayList;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @Service
@@ -125,7 +129,7 @@ public class MediaServiceImpl implements  MediaService{
                 return MediaResponse.builder()
                         .name(resource.getFilename())
                         .contentType(Files.probeContentType(path))
-                        .extension(MediaUtil.extension(mediaName))
+                        .extension(MediaUtil.extension(folderName))
                         .size(size)
                         .uri(String.format("%s%s/%s",baseUri,folderName,mediaName)).build();
             }
@@ -142,108 +146,81 @@ public class MediaServiceImpl implements  MediaService{
 //        return null;
     }
 
-    @Override
-    public List<MediaResponse> loadAllMedia() {
-//        public List<MediaResponse> getAllMedia() {
-            List<MediaResponse> mediaResponses = new ArrayList<>();
 
-            Path folderPath = Paths.get(serverPath );
-            try {
-                Files.walk(folderPath)
-                        .filter(Files::isRegularFile)
-                        .forEach(path -> {
-                            try {
-                                Long size = Files.size(path);
-                                Resource resource = new UrlResource(path.toUri());
-
-                                mediaResponses.add(MediaResponse.builder()
-                                        .name(resource.getFilename())
-                                        .contentType(Files.probeContentType(path))
-                                        .extension(MediaUtil.extension(resource.getFilename()))
-                                        .size(size)
-                                        .uri(String.format("%s/%s", baseUri, resource.getFilename()))
-                                        .build());
-                            } catch (IOException e) {
-                                throw new ResponseStatusException(
-                                        HttpStatus.INTERNAL_SERVER_ERROR,
-                                        String.format("Error processing file: %s", e.getLocalizedMessage())
-                                );
-                            }
-                        });
-            } catch (IOException e) {
-                throw new ResponseStatusException(
-                        HttpStatus.INTERNAL_SERVER_ERROR,
-                        String.format("Error accessing folder: %s", e.getLocalizedMessage())
-                );
-            }
-
-            if (mediaResponses.isEmpty()) {
-                throw new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "No files found in the specified folder"
-                );
-            }
-
-            return mediaResponses;
-//        return null;
-    }
 
     @Override
-    public MediaResponse downloadMediaByName(HttpServletRequest httpServletRequest, String folderName) {
-        
-        return null;
-    }
-   /* public String generateUrlDownload(HttpServletRequest httpServletRequest,String filename)
-    {
-        return String.format("%s://%s:%d/api/v1/file/download/%s"
-                ,httpServletRequest.getScheme(),
-                httpServletRequest.getServerName(),
-                httpServletRequest.getServerPort(),
-                filename
-        );
-    }*/
+    public List<MediaResponse> loadAllMedias(String folderName) {
+        Path path = Paths.get(serverPath + folderName);
 
-/*    @Override
-    public List<MediaResponse> getAllMedia(String folderName) {
-            List<MediaResponse> mediaResponses = new ArrayList<>();
-
-            Path folderPath = Paths.get(serverPath + folderName);
-            try {
-                Files.walk(folderPath)
-                        .filter(Files::isRegularFile)
-                        .forEach(path -> {
-                            try {
-                                Long size = Files.size(path);
-                                Resource resource = new UrlResource(path.toUri());
-
-                                mediaResponses.add(MediaResponse.builder()
-                                        .name(resource.getFilename())
-                                        .contentType(Files.probeContentType(path))
-                                        .extension(MediaUtil.extension(resource.getFilename()))
-                                        .size(size)
-                                        .uri(String.format("%s%s/%s", baseUri, folderName, resource.getFilename()))
-                                        .build());
-                            } catch (IOException e) {
-                                throw new ResponseStatusException(
-                                        HttpStatus.INTERNAL_SERVER_ERROR,
-                                        String.format("Error processing file: %s", e.getLocalizedMessage())
-                                );
-                            }
-                        });
-            } catch (IOException e) {
-                throw new ResponseStatusException(
-                        HttpStatus.INTERNAL_SERVER_ERROR,
-                        String.format("Error accessing folder: %s", e.getLocalizedMessage())
-                );
-            }
-
-            if (mediaResponses.isEmpty()) {
+        try {
+            Resource resource = new UrlResource(path.toUri());
+            if (!resource.exists()) {
                 throw new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
-                        "No files found in the specified folder"
+                        "Media not found"
                 );
             }
 
-            return mediaResponses;
-    }*/
+            List<MediaResponse> mediaResponseList = new ArrayList<>();
+            // Iterate over files in the directory
+            try (Stream<Path> paths = Files.list(path)) {
+                paths.forEach(filePath -> {
+
+                    try {
+                        String fileName = filePath.getFileName().toString();
+                        // Create a MediaResponse object for each file
+                        MediaResponse mediaResponse = MediaResponse.builder()
+                                .name(fileName)
+                                .uri(baseUri + folderName + "/" + fileName) // Ensure correct URI
+                                .extension(MediaUtil.extractExtension(fileName))
+                                .size(Files.size(filePath))
+                                .build();
+                        // Add MediaResponse to the list
+                        mediaResponseList.add(mediaResponse);
+                    } catch (IOException e) {
+                        throw new ResponseStatusException(
+                                HttpStatus.INTERNAL_SERVER_ERROR,
+                                "Error occurred while processing media file: " + filePath.getFileName()
+                        );
+                    }
+                });
+            }
+            return mediaResponseList;
+        } catch (IOException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error occurred while accessing media directory"
+            );
+        }
+    }
+
+
+    @Override
+    public ResponseEntity<Resource> downloadMediaByName(String fileName, String folderName, HttpServletRequest request) {
+        try {
+            // Get path of the image
+            Path imagePath = Paths.get(serverPath + folderName + "/" + fileName);
+            Resource resource = new UrlResource(imagePath.toUri());
+
+            if (resource.exists() && resource.isReadable()) {
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.parseMediaType(Files.probeContentType(imagePath)));
+                // Set Content-Disposition to "attachment" to prompt download
+                headers.setContentDispositionFormData("attachment", resource.getFilename());
+
+                return ResponseEntity
+                        .ok()
+                        .headers(headers)
+                        .body(resource);
+            } else {
+                // Return 404 Not Found if resource does not exist or is not readable
+                return ResponseEntity.notFound().build();
+            }
+        } catch (IOException ex) {
+            // Handle exception
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 }
