@@ -8,6 +8,7 @@ import co.istad.demomobilebanking.feature.cardtype.CardTypeRepository;
 import co.istad.demomobilebanking.feature.user.RoleRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.Comment;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -19,10 +20,9 @@ public class DataInit {
     private final AccountTypeRepository accountTypeRepository;
     private final CardTypeRepository cardTypeRepository;
     @PostConstruct
-    void init() {
-
-        // Auto generate role (USER, CUSTOMER, STAFF, ADMIN)
-        if (roleRepository.count() < 1) {
+    void initRole(){
+        // auto generated
+        if (roleRepository.count()<1){
             Role user = new Role();
             user.setName("USER");
 
@@ -36,41 +36,38 @@ public class DataInit {
             admin.setName("ADMIN");
 
             roleRepository.saveAll(
-                    List.of(user, customer, staff, admin)
+                    List.of(user,customer,staff,admin)
             );
         }
 
-
     }
+
     @PostConstruct
     void initAccountType(){
-        if (accountTypeRepository.count() < 1){
+        if (accountTypeRepository.count()<1){
             AccountType payRoll = new AccountType();
-            payRoll.setName("Payroll account");
-            payRoll.setAlias("payroll account type");
+            payRoll.setName("Payroll Account");
+            payRoll.setAlias("payroll-account");
             payRoll.setIsDeleted(false);
-            payRoll.setDescription("a type of account used specifically for employee compensation, whether it's to do with salary, wage, or bonuses");
-            accountTypeRepository.save(payRoll);
+            payRoll.setDescription("A payroll account is a checking account that a business uses to pay its employees.");
 
-            //saving account type
-            AccountType savingAct = new AccountType();
-            savingAct.setName("Saving");
-            savingAct.setAlias("saving");
-            savingAct.setIsDeleted(false);
-            savingAct.setDescription(" a deposit account held at a financial institution that provides security for your principal and a modest interest rate");
-            accountTypeRepository.save(savingAct);
+            AccountType saving = new AccountType();
+            saving.setName("Saving Account");
+            saving.setAlias("saving-account");
+            saving.setIsDeleted(false);
+            saving.setDescription("A savings account is a type of bank account that allows you to store money and earn interest.");
 
+            AccountType card = new AccountType();
+            card.setName("Card Account");
+            card.setAlias("card-account");
+            card.setIsDeleted(false);
+            card.setDescription("A card account is the account that a cardholder has with a bank, and where withdrawals are debited and deposits are credited when the cardholder makes a transaction. ");
+            accountTypeRepository.save(card);
 
-            AccountType cardAccount=new AccountType();
-            cardAccount.setName("card account ");
-            cardAccount.setAlias("saving account type");
-            cardAccount.setIsDeleted(false);
-            cardAccount.setDescription("Card Account means the Cardholder's Account(s) with the Bank in respect of which the Card is issued,");
-            accountTypeRepository.save(cardAccount);
-
-             /*accountTypeRepository.saveAll(
+            accountTypeRepository.saveAll(
                     List.of(payRoll,saving)
-            );*/
+            );
+
 
         }
 
@@ -78,20 +75,19 @@ public class DataInit {
 
     @PostConstruct
     void initCardType(){
+        // auto generated
         if (cardTypeRepository.count()<1){
-            CardType visaCard = new CardType();
-            visaCard.setName("Visa Card");
-            visaCard.setIsDeleted(false);
-            cardTypeRepository.save(visaCard);
+            CardType visa = new CardType();
+            visa.setName("Visa");
+            visa.setIsDeleted(false);
 
             CardType masterCard = new CardType();
             masterCard.setName("MasterCard");
-            masterCard.setIsDeleted(false);
-            cardTypeRepository.save(masterCard);
+            visa.setIsDeleted(false);
 
-            /*cardTypeRepository.saveAll(
-                    List.of(visaCard,masterCard)
-            );*/
+            cardTypeRepository.saveAll(
+                    List.of(visa,masterCard)
+            );
 
         }
 
