@@ -1,6 +1,6 @@
 package co.istad.demomobilebanking.feature.account;
 
-import co.istad.mbakingapi.domain.Account;
+import co.istad.demomobilebanking.domain.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

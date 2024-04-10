@@ -18,20 +18,26 @@ public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-    private  Account sender_account;
 
     @ManyToOne
-    private  Account receiver_account;
+    private Account owner;
+
+    @ManyToOne
+    private Account transferReceiver; // uses when transaction type is TRANSFER
+
+    private String paymentReceiver;
 
     private BigDecimal amount;
 
+    @Column(columnDefinition = "TEXT")
     private String remark;
 
-    private Boolean isPayment;
+    @Column(nullable = false, length = 30)
+    private String transactionType; // transfer and payment
+
+    private Boolean status; // Completed (TRUE), Failed (FALSE), Pending
 
     private LocalDateTime transactionAt;
 
-    private  Boolean isDelete;
 
 }

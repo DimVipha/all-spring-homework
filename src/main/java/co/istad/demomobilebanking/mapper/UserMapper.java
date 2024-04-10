@@ -1,35 +1,41 @@
 package co.istad.demomobilebanking.mapper;
 
+import co.istad.demomobilebanking.domain.Account;
 import co.istad.demomobilebanking.domain.User;
+import co.istad.demomobilebanking.domain.UserAccount;
+import co.istad.demomobilebanking.feature.account.dto.AccountResponse;
 import co.istad.demomobilebanking.feature.user.DTO.UserCreateRequest;
 import co.istad.demomobilebanking.feature.user.DTO.UserDetailResponse;
 import co.istad.demomobilebanking.feature.user.DTO.UserResponse;
 import co.istad.demomobilebanking.feature.user.DTO.UserUpdateRequest;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.*;
 
 import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
-    User fromUserCreateRequest(UserCreateRequest request);
 
-//    void fromUserCreatRequest2(@MappingTarget User user);
+    // SourceType = UserCreateRequest (Parameter)
+    // TargetType = User (ReturnType)
+    User fromUserCreateRequest(UserCreateRequest userCreateRequest);
 
-//    UserResponse toUserDetailResponse(User user);
+    void fromUserCreateRequest2(@MappingTarget User user, UserCreateRequest userCreateRequest);
 
+    UserDetailResponse toUserDetailResponse(User user);
 
-//    UserDetailsResponse toUserDetailsResponse(User user);
-
-    @BeanMapping(nullValuePropertyMappingStrategy =
-            NullValuePropertyMappingStrategy.IGNORE)
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void fromUserUpdateRequest(UserUpdateRequest userUpdateRequest, @MappingTarget User user);
 
     UserResponse toUserResponse(User user);
 
-    UserDetailResponse toUserDetailResponse(User user);
+    List<UserResponse> toUserResponseList(List<User> users);
 
-//    List<UserResponse> toUserResponse();
+    @Named("mapUserResponse")
+    default UserResponse mapUserResponse(List<UserAccount> userAccountList) {
+        // YOUR LOGIC OF MAPPING HERE...
+        return toUserResponse(userAccountList.get(0).getUser());
+    }
+
+    //@Mapping(source = "userAccountList",target = "user",qualifiedByName ="mapUserResponse" )
+
 }

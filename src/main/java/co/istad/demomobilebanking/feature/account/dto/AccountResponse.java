@@ -1,8 +1,8 @@
 package co.istad.demomobilebanking.feature.account.dto;
 
-import co.istad.mbakingapi.features.accountType.dto.AccountTypeResponse;
-import co.istad.mbakingapi.features.user.dto.UserDetailResponse;
-import co.istad.mbakingapi.features.user.dto.UserResponse;
+
+import co.istad.demomobilebanking.feature.accountType.dto.AccountTypeResponse;
+import co.istad.demomobilebanking.feature.user.DTO.UserResponse;
 
 import java.math.BigDecimal;
 
@@ -14,5 +14,6 @@ public record AccountResponse(
         BigDecimal transferLimit,
         AccountTypeResponse accountType,
         UserResponse user
+
 ) {
 }

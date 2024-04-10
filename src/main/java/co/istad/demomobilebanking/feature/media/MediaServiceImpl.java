@@ -1,7 +1,7 @@
 package co.istad.demomobilebanking.feature.media;
 
 import co.istad.demomobilebanking.feature.media.dto.MediaResponse;
-import co.istad.demomobilebanking.utile.MediaUtil;
+import co.istad.demomobilebanking.util.MediaUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

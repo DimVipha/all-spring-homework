@@ -23,7 +23,7 @@ public class AccountTypeServiceImpl implements AccountTypeService {
 
     @Override
     public AccountTypeResponse findAccountTypeByAlias(String alias) {
-        AccountType accountType = accountTypeRepository.findByAliasIgnoreCase(alias).orElseThrow(
+        AccountType accountType = accountTypeRepository.findByAlias(alias).orElseThrow(
                 ()-> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
                         "Account does not exits with "+ alias +" alias"
