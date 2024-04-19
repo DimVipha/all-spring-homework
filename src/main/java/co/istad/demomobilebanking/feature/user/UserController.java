@@ -24,7 +24,7 @@ public class UserController {
 
     @GetMapping
     Page<UserResponse> findList(@RequestParam(required = false, defaultValue = "0")int page,
-                                @RequestParam(required = false, defaultValue = "1") int limit){
+                                @RequestParam(required = false, defaultValue = "25") int limit){
        return userService.findList(page, limit);
     }
     @ResponseStatus(HttpStatus.CREATED)
