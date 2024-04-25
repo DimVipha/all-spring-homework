@@ -21,7 +21,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 () -> new UsernameNotFoundException("User not found !!! " )
         );
 
-        CustomUserDetail customUserDetail=new CustomUserDetail();
+        CustomUserDetails customUserDetail=new CustomUserDetails();
         customUserDetail.setUser(user);
 
         log.info("user: {}",user);
